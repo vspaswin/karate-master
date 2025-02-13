@@ -1,15 +1,14 @@
 pipeline:
-  name: Karate Test Pipeline
   identifier: karate_test_pipeline
-  projectIdentifier: default_project
+  name: Karate Test Pipeline
   orgIdentifier: default
+  projectIdentifier: default_project
   properties:
     ci:
       codebase:
+        build: <+input>
         connectorRef: GitHubKarate
         repoName: karate-master
-        build: <+input>
-        branch: main  # or your default branch name
   inputVariables:
     - name: environment
       type: String
@@ -18,43 +17,22 @@ pipeline:
   tags: {}
   stages:
     - stage:
-        name: Run Karate Tests
-        identifier: Run_Karate_Tests
-        type: CI
+        identifier: build_and_test
+        name: Build and Test
         spec:
-          cloneCodebase: true
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: account.DockerHub
+              image: maven:3.8-jdk-17
           execution:
             steps:
               - step:
-                  type: Run
-                  name: Set Environment
-                  identifier: Set_Environment
+                  identifier: maven_test
+                  name: Run Maven Tests
                   spec:
-                    shell: Sh
                     command: |-
-                      # Set default environment if not specified
-                      export KARATE_ENV=${KARATE_ENV:-dev}
-                      export API_BASE_URL=${API_BASE_URL:-https://dev-api.example.com}
-                      echo "Running tests for environment: $KARATE_ENV"
-                      echo "API Base URL: $API_BASE_URL"
-              - step:
+                      mvn clean test
+                  timeout: 10m
                   type: Run
-                  name: Run Tests
-                  identifier: Run_Tests
-                  spec:
-                    shell: Sh
-                    image: maven:3.8-jdk-17
-                    command: mvn test -DKARATE_ENV=${KARATE_ENV} -DAPI_BASE_URL=${API_BASE_URL}
-              - step:
-                  type: Run
-                  name: Save Reports
-                  identifier: Save_Reports
-                  spec:
-                    shell: Sh
-                    command: |-
-                      if [ -d "target/cucumber-html-reports" ]; then
-                        echo "Cucumber reports generated successfully"
-                        ls -la target/cucumber-html-reports/
-                      else
-                        echo "No Cucumber reports found"
-                      fi
+        type: CI
