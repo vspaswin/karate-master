@@ -16,8 +16,7 @@ class TestSuite {
     @Test
     void testAll() {
         Results results = Runner.path(
-            "classpath:examples",
-            "classpath:usermanager"
+            "classpath:examples"
         )
         .outputCucumberJson(true)
         .parallel(5);

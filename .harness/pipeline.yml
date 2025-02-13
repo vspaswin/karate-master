@@ -1,36 +1,15 @@
-pipeline:
-  name: Karate Test Pipeline
-  identifier: karate_test_pipeline
-  projectIdentifier: default_project
-  orgIdentifier: default
-  properties:
-    ci:
-      codebase:
-        connectorRef: GitHubKarate
-        repoName: karate-master
-        branch: feature/harness-pipeline
-        build: <+input>
+kind: pipeline
+spec:
   stages:
-    - stage:
-        name: Build Test
-        identifier: Build_Test
-        description: Build and test the application
-        type: CI
+  - type: ci
+    spec:
+      steps:
+      - name: test
+        type: run
         spec:
-          cloneCodebase: true
-          runtime:
-            type: Cloud
-            spec: {}
-          platform:
-            os: Linux
-            arch: Amd64
-          execution:
-            steps:
-              - step:
-                  type: Run
-                  name: Maven Test
-                  identifier: Maven_Test
-                  spec:
-                    connectorRef: account.harnessImage
-                    image: maven:3.8-jdk-17
-                    command: mvn test
+          container: maven:3.8-openjdk-17
+          script: |-
+            mvn test
+        reports:
+        - name: test-results
+          path: target/"target/cucumber-html-reports/**/*"
