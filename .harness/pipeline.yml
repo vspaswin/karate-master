@@ -19,7 +19,7 @@ pipeline:
           infrastructure:
             type: KubernetesDirect
             spec:
-              connectorRef: account.DockerHub
+              connectorRef: account.harnessImage
               namespace: harness-delegate-ng
           execution:
             steps:
@@ -28,7 +28,7 @@ pipeline:
                   name: Maven Test
                   identifier: Maven_Test
                   spec:
-                    connectorRef: account.DockerHub
+                    connectorRef: account.harnessImage
                     image: maven:3.8-jdk-17
                     shell: Bash
                     command: |
