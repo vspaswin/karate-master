@@ -1,0 +1,36 @@
+pipeline:
+  name: Karate Test Pipeline
+  identifier: karate_test_pipeline
+  projectIdentifier: default_project
+  orgIdentifier: default
+  properties:
+    ci:
+      codebase:
+        connectorRef: GitHubKarate
+        repoName: karate-master
+        branch: feature/harness-pipeline
+        build: <+input>
+  stages:
+    - stage:
+        name: Build Test
+        identifier: Build_Test
+        description: Build and test the application
+        type: CI
+        spec:
+          cloneCodebase: true
+          runtime:
+            type: Cloud
+            spec: {}
+          platform:
+            os: Linux
+            arch: Amd64
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Maven Test
+                  identifier: Maven_Test
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: maven:3.8-jdk-17
+                    command: mvn test
