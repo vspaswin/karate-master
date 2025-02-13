@@ -3,38 +3,21 @@ pipeline:
   identifier: karate_test_pipeline
   projectIdentifier: default_project
   orgIdentifier: default
-  tags: {}
-  properties:
-    ci:
-      codebase:
-        connectorRef: GitHubKarate
-        repoName: karate-master
-        build: <+input>
-        branch: feature/harness-pipeline
-  inputVariables:
-    - name: environment
-      type: String
-      description: "Environment to run tests against (dev/qa/staging/prod)"
-      required: true
   stages:
     - stage:
-        name: Build and Test
-        identifier: build_and_test
+        name: Build Test
+        identifier: Build_Test
+        description: Build and test the application
         type: CI
         spec:
-          runtime:
-            type: Cloud
-            spec: {}
-          platform:
-            os: Linux
-            arch: Amd64
+          cloneCodebase: true
           execution:
             steps:
               - step:
                   type: Run
-                  name: Run Maven Tests
-                  identifier: maven_test
+                  name: Maven Test
+                  identifier: Maven_Test
                   spec:
                     connectorRef: account.harnessImage
                     image: maven:3.8-jdk-17
-                    command: mvn clean test
+                    command: mvn test
