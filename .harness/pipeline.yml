@@ -1,38 +1,35 @@
 pipeline:
-  identifier: karate_test_pipeline
   name: Karate Test Pipeline
-  orgIdentifier: default
+  identifier: karate_test_pipeline
   projectIdentifier: default_project
+  orgIdentifier: default
   properties:
     ci:
       codebase:
-        build: <+input>
         connectorRef: GitHubKarate
         repoName: karate-master
-  inputVariables:
-    - name: environment
-      type: String
-      description: "Environment to run tests against (dev/qa/staging/prod)"
-      required: true
-  tags: {}
+        branch: feature/harness-pipeline
+        build: <+input>
   stages:
     - stage:
-        identifier: build_and_test
-        name: Build and Test
+        name: Build Test
+        identifier: Build_Test
+        type: CI
         spec:
           infrastructure:
             type: KubernetesDirect
             spec:
               connectorRef: account.DockerHub
-              image: maven:3.8-jdk-17
+              namespace: harness-delegate-ng
           execution:
             steps:
               - step:
-                  identifier: maven_test
-                  name: Run Maven Tests
-                  spec:
-                    command: |-
-                      mvn clean test
-                  timeout: 10m
                   type: Run
-        type: CI
+                  name: Maven Test
+                  identifier: Maven_Test
+                  spec:
+                    connectorRef: account.DockerHub
+                    image: maven:3.8-jdk-17
+                    shell: Bash
+                    command: |
+                      mvn test
