@@ -1,0 +1,85 @@
+pipeline:
+  name: Karate Test Pipeline
+  identifier: karate_test_pipeline
+  projectIdentifier: default_project
+  orgIdentifier: default
+  properties:
+    ci:
+      codebase:
+        connectorRef: GitHubKarate
+        repoName: karate-master
+        build: <+input>
+        branch: main  # or your default branch name
+  inputVariables:
+    - name: environment
+      type: String
+      description: "Environment to run tests against (dev/qa/staging/prod)"
+      required: true
+  stages:
+    - stage:
+        name: Test
+        identifier: Test
+        type: CI
+        spec:
+          caching:
+            enabled: true
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: SetEnvironmentVariables
+                  identifier: SetEnvironmentVariables
+                  spec:
+                    shell: Sh
+                    command: |-
+                      # Export environment-specific variables
+                      case "<+input.variables.environment>" in
+                        "dev")
+                          export KARATE_ENV=dev
+                          export API_BASE_URL=https://dev-api.example.com
+                          ;;
+                        "qa")
+                          export KARATE_ENV=qa
+                          export API_BASE_URL=https://qa-api.example.com
+                          ;;
+                        "staging")
+                          export KARATE_ENV=staging
+                          export API_BASE_URL=https://staging-api.example.com
+                          ;;
+                        "prod")
+                          export KARATE_ENV=prod
+                          export API_BASE_URL=https://api.example.com
+                          ;;
+                      esac
+              - step:
+                  type: Test
+                  name: RunKarateTests
+                  identifier: RunKarateTests
+                  spec:
+                    command: |-
+                      mvn test -DKARATE_ENV=${KARATE_ENV} -DAPI_BASE_URL=${API_BASE_URL}
+                    shell: Sh
+                    connectorRef: account.harnessImage
+                    image: maven:3.8-jdk-17
+                    intelligenceMode: true
+                    reports:
+                      - type: JUnit
+                        spec:
+                          paths:
+                            - "target/surefire-reports/*.xml"
+              - step:
+                  type: SaveArtifactToCloud
+                  name: SaveCucumberReports
+                  identifier: SaveCucumberReports
+                  spec:
+                    paths:
+                      - "target/cucumber-html-reports/**/*"
+                    connectorRef: harness.cloud.storage
+                    region: us-east-1
