@@ -1,5 +1,13 @@
 kind: pipeline
 spec:
+  parameters:
+    - name: karate.env
+      type: string
+      default: "dev"  # Default environment
+    - name: tags
+      type: string
+      default: ""  # Default to run all tests
+
   stages:
   - type: ci
     spec:
@@ -9,7 +17,7 @@ spec:
         spec:
           container: maven:3.8-openjdk-17
           script: |-
-            mvn test
+            mvn test -Dkarate.env=${{karate.env}} -Dtags=${{tags}}
         reports:
         - name: test-results
           path: target/"target/cucumber-html-reports/**/*"
