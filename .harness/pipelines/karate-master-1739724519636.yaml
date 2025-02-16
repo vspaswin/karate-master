@@ -28,3 +28,33 @@ pipeline:
             reports:
               - name: test-results
                 path: target/"target/cucumber-html-reports/**/*"
+    - stage:
+        name: env-varibale
+        identifier: envvaribale
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Docker
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: RunTests
+                  name: RunTests_1
+                  identifier: RunTests_1
+                  spec:
+                    language: Java
+                    buildTool: Maven
+                    args: " mvn test -Dkarate.env=${{karate.env}} -Dtags=${{tags}}"
+                    runOnlySelectedTests: true
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - target/"target/cucumber-html-reports/**/*"
+                    enableTestSplitting: false
