@@ -1,0 +1,14 @@
+inputSet:
+  name: Build_karate_master_1739724526924-push-trigger-input-set
+  identifier: Build_karate_master_1739724526924pushtriggerinputset
+  orgIdentifier: default
+  projectIdentifier: default_project
+  pipeline:
+    identifier: Build_karate_master_1739724526924
+    properties:
+      ci:
+        codebase:
+          build:
+            type: branch
+            spec:
+              branch: <+trigger.branch>
