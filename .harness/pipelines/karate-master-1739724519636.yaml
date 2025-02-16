@@ -9,7 +9,6 @@ pipeline:
         build: <+input>
         connectorRef: GitHubKarate
         repoName: karate-master
-  spec: null
   parameters:
     - name: karate.env
       type: string
