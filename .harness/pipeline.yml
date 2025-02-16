@@ -1,23 +1,31 @@
-kind: pipeline
-spec:
+---
+pipeline:
+  identifier: Build_karate_master_1739724526924
+  name: Build karate-master
+  orgIdentifier: default
+  projectIdentifier: default_project
+  properties:
+    ci:
+      codebase:
+        build: <+input>
+        connectorRef: GitHubKarate
+        repoName: karate-master
   parameters:
     - name: karate.env
       type: string
-      default: "dev"  # Default environment
+      default: dev
     - name: tags
       type: string
-      default: ""  # Default to run all tests
-
+      default: ""
   stages:
-  - type: ci
-    spec:
-      steps:
-      - name: test
-        type: run
-        spec:
-          container: maven:3.8-openjdk-17
-          script: |-
-            mvn test -Dkarate.env=${{karate.env}} -Dtags=${{tags}}
-        reports:
-        - name: test-results
-          path: target/"target/cucumber-html-reports/**/*"
+    - type: ci
+      spec:
+        steps:
+          - name: test
+            type: run
+            spec:
+              container: maven:3.8-openjdk-17
+              script: mvn test -Dkarate.env=${{karate.env}} -Dtags=${{tags}}
+            reports:
+              - name: test-results
+                path: target/"target/cucumber-html-reports/**/*"
