@@ -32,4 +32,7 @@ pipeline:
             type: Script
             spec:
               shell: Bash
+              environmentVariables:
+                - name: karate.env
+                  value: ${{karate.env}}
               command: ./run_tests.sh
