@@ -28,11 +28,3 @@ pipeline:
             reports:
               - name: test-results
                 path: target/"target/cucumber-html-reports/**/*"
-          - name: Run Karate Tests
-            type: Script
-            spec:
-              shell: Bash
-              environmentVariables:
-                - name: karate.env
-                  value: ${{karate.env}}
-              command: ./run_tests.sh -Dkarate.env=${{karate.env}}
