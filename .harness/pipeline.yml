@@ -1,35 +1,42 @@
 pipeline:
   name: Karate Test Pipeline
-  identifier: karate_test_pipeline
+  identifier: Build_karate_master_1739724526924
   projectIdentifier: default_project
   orgIdentifier: default
+  stages:
+    - stage:
+        name: Run tests
+        identifier: Run_tests
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Arm64
+          runtime:
+            type: Docker
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: RunTests
+                  name: RunTests_1
+                  identifier: RunTests_1
+                  spec:
+                    language: Java
+                    buildTool: Maven
+                    args: clean test
+                    runOnlySelectedTests: true
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - target/surefire-reports/TEST-examples.ExamplesTest.xml
+                    enableTestSplitting: false
   properties:
     ci:
       codebase:
         connectorRef: GitHubKarate
         repoName: karate-master
-        branch: feature/harness-pipeline
         build: <+input>
-  stages:
-    - stage:
-        name: Build Test
-        identifier: Build_Test
-        type: CI
-        spec:
-          infrastructure:
-            type: KubernetesDirect
-            spec:
-              connectorRef: account.harnessImage
-              namespace: harness-delegate-ng
-          execution:
-            steps:
-              - step:
-                  type: Run
-                  name: Maven Test
-                  identifier: Maven_Test
-                  spec:
-                    connectorRef: account.harnessImage
-                    image: maven:3.8-jdk-17
-                    shell: Bash
-                    command: |
-                      mvn test
