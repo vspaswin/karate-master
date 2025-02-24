@@ -5,8 +5,8 @@ pipeline:
   orgIdentifier: default
   stages:
     - stage:
-        name: Run tests
-        identifier: Run_tests
+        name: test
+        identifier: test
         description: ""
         type: CI
         spec:
@@ -20,23 +20,21 @@ pipeline:
           execution:
             steps:
               - step:
-                  type: RunTests
-                  name: RunTests_1
-                  identifier: RunTests_1
+                  type: Run
+                  name: Run_1
+                  identifier: Run_1
                   spec:
-                    language: Java
-                    buildTool: Maven
-                    args: clean test
-                    runOnlySelectedTests: true
-                    reports:
-                      type: JUnit
-                      spec:
-                        paths:
-                          - target/surefire-reports/TEST-examples.ExamplesTest.xml
-                    enableTestSplitting: false
+                    shell: Bash
+                    command: mvn test -Dkarate.options=--env ${karate.env}
   properties:
     ci:
       codebase:
         connectorRef: GitHubKarate
         repoName: karate-master
         build: <+input>
+  variables:
+    - name: env
+      type: String
+      description: ""
+      required: true
+      value: <+input>
