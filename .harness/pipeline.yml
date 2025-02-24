@@ -35,4 +35,4 @@ pipeline:
               environmentVariables:
                 - name: karate.env
                   value: ${{karate.env}}
-              command: ./run_tests.sh
+              command: ./run_tests.sh -Dkarate.env=${{karate.env}}
