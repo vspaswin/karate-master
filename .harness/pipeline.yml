@@ -1,4 +1,3 @@
----
 pipeline:
   identifier: Build_karate_master_1739724526924
   name: Build karate-master
@@ -29,3 +28,8 @@ pipeline:
             reports:
               - name: test-results
                 path: target/"target/cucumber-html-reports/**/*"
+          - name: Run Karate Tests
+            type: Script
+            spec:
+              shell: Bash
+              command: ./run_tests.sh
