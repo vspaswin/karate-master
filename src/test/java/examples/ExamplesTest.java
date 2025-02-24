@@ -10,7 +10,7 @@ class ExamplesTest {
     @Test
     void testParallel() {
         Results results = Runner.path("classpath:examples")
-                //.outputCucumberJson(true)
+                .systemProperty("karate.env", System.getProperty("karate.env", "dev"))
                 .parallel(5);
         assertEquals(0, results.getFailCount(), results.getErrorMessages());
     }
