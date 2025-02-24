@@ -4,28 +4,17 @@ pipeline:
   projectIdentifier: default_project
   orgIdentifier: default
   stages:
-    - stage:
-        name: test
-        identifier: test
-        description: ""
-        type: CI
-        spec:
-          cloneCodebase: true
-          platform:
-            os: Linux
-            arch: Arm64
-          runtime:
-            type: Docker
-            spec: {}
-          execution:
-            steps:
-              - step:
-                  type: Run
-                  name: Run_1
-                  identifier: Run_1
-                  spec:
-                    shell: Bash
-                    command: mvn test -Dkarate.options=--env ${karate.env}
+    - type: ci
+      spec:
+        steps:
+          - name: test
+            type: run
+            spec:
+              container: maven:3.8-openjdk-17
+              script: mvn test -Dkarate.options=--env ${karate.env}
+            reports:
+              - name: test-results
+                path: target/"target/cucumber-html-reports/**/*"
   properties:
     ci:
       codebase:
