@@ -29,7 +29,8 @@ pipeline:
                     connectorRef: account.harnessImage
                     image: maven:3-amazoncorretto-17
                     shell: Sh
-                    command: docker run -it --rm -v "$(pwd)":/src -w /src -v "$HOME/.m2":/root/.m2 maven:3-amazoncorretto-17 mvn clean test -Dkarate.env=${karate.env} -Dtags=${tags}
+                    command: |
+                      docker run -it --rm -v "$(pwd)":/src -w /src -v "$HOME/.m2":/root/.m2 maven:3-amazoncorretto-17 mvn clean test -Dkarate.env=${{ env }}
   properties:
     ci:
       codebase:
@@ -39,6 +40,6 @@ pipeline:
   variables:
     - name: env
       type: String
-      description: ""
+      description: The environment to run the tests in.
       required: true
       value: <+input>
