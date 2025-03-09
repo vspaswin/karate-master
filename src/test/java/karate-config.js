@@ -1,18 +1,27 @@
 function fn() {
   var env = karate.env; // get system property 'karate.env'
-  karate.log('karate.env system property was:', env);
   if (!env) {
-    env = 'dev';
+    env = 'dev'; // default to 'dev' if not passed
   }
+
   var config = {
-    env: env,
-    myVarName: 'someValue'
-  }
+    environment: env
+  };
+
+  // Using the same base URL for all environments for JSONPlaceholder example
+  var baseURL = 'https://jsonplaceholder.typicode.com';
+
   if (env == 'dev') {
-    // customize
-    // e.g. config.foo = 'bar';
-  } else if (env == 'e2e') {
-    // customize
+    config.apiUrl = baseURL;
+  } else if (env == 'test') {
+    config.apiUrl = baseURL;
+  } else if (env == 'prod') {
+    config.apiUrl = baseURL;
   }
+  // In a real-world scenario, these URLs would be different
+
+  karate.configure('logPrettyRequest', true);
+  karate.configure('logPrettyResponse', true);
+
   return config;
 }
