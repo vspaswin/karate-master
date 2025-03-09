@@ -23,8 +23,8 @@ pipeline:
           - name: test
             type: run
             spec:
-              container: maven:3.8-openjdk-17
-              script: mvn test -Dkarate.options=--env ${karate.env} -Dtags=${{tags}}
+              script: |
+                docker run -it --rm -v "$(pwd)":/src -w /src -v "$HOME/.m2":/root/.m2 maven:3-amazoncorretto-17 mvn clean test -Dkarate.env=${karate.env} -Dtags=${tags}
             reports:
               - name: test-results
                 path: target/"target/cucumber-html-reports/**/*"
