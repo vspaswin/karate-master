@@ -4,17 +4,32 @@ pipeline:
   projectIdentifier: default_project
   orgIdentifier: default
   stages:
-    - type: ci
-      spec:
-        steps:
-          - name: test
-            type: run
+    - stage:
+        name: CI
+        identifier: CI
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          infrastructure:
+            type: KubernetesDirect
             spec:
-              container: maven:3.8-openjdk-17
-              script: mvn test -Dkarate.options=--env ${karate.env}
-            reports:
-              - name: test-results
-                path: target/"target/cucumber-html-reports/**/*"
+              connectorRef: macminikubeconnector
+              namespace: harness-delegate-ng
+              automountServiceAccountToken: true
+              nodeSelector: {}
+              os: Linux
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Run Karate Tests
+                  identifier: Run_Karate_Tests
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: maven:3-amazoncorretto-17
+                    shell: Sh
+                    command: docker run -it --rm -v "$(pwd)":/src -w /src -v "$HOME/.m2":/root/.m2 maven:3-amazoncorretto-17 mvn clean test -Dkarate.env=${karate.env} -Dtags=${tags}
   properties:
     ci:
       codebase:
