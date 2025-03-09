@@ -30,7 +30,7 @@ pipeline:
                     image: maven:3-amazoncorretto-17
                     shell: Sh
                     command: |
-                      docker run hello-world
+                      mvn clean test
   properties:
     ci:
       codebase:
